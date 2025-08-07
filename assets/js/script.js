@@ -158,7 +158,6 @@ for (let i = 0; i < navigationLinks.length; i++) {
   });
 }
 
-// Leaflet Map Initialization
 let map;
 
 function initMap() {
@@ -187,7 +186,6 @@ function initMap() {
       <div style="text-align: center; padding: 10px;">
         <h3 style="color: #667eea; margin-bottom: 10px;">📍 Lokasi Kampus</h3>
         <p><strong>Politeknik Elektronika Negeri Surabaya</strong></p>
-        <p style="font-size: 0.9em; color: #666;">Data Scientist & Graphic Designer</p>
         <p>Koordinat: ${campusLat.toFixed(6)}, ${campusLng.toFixed(6)}</p>
       </div>
     `).openPopup();
@@ -199,6 +197,12 @@ function initMap() {
     fillOpacity: 0.2,
     radius: 1000
   }).addTo(map);
+
+  // Perbaikan render peta saat tab Contact aktif
+  setTimeout(() => {
+    map.invalidateSize();
+    map.setView([campusLat, campusLng], 15);
+  }, 300);
 }
 
 // Fungsi untuk mendapatkan lokasi saat ini
@@ -245,5 +249,30 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cek apakah elemen map ada
   if (document.getElementById('map')) {
     initMap();
+  }
+
+  // Fungsi untuk memperbaiki render peta saat tab Contact aktif
+  function fixMapRender() {
+    setTimeout(() => {
+      if (map) {
+        map.invalidateSize();
+        // Set ulang view ke koordinat kampus agar peta tampil benar
+        map.setView([-7.275643371086998, 112.79380041044202], 15);
+      }
+    }, 200);
+  }
+
+  // Jika Anda menggunakan sistem navigasi berbasis tombol, tambahkan event listener untuk tombol Contact
+  const contactNavBtn = document.querySelector('button[data-nav-link]:nth-child(5)');
+  if (contactNavBtn) {
+    contactNavBtn.addEventListener('click', () => {
+      fixMapRender();
+    });
+  }
+
+  // Jika halaman Contact sudah aktif saat load, panggil fixMapRender
+  const contactArticle = document.querySelector('article.contact.active');
+  if (contactArticle) {
+    fixMapRender();
   }
 });
