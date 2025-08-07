@@ -157,3 +157,93 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
   });
 }
+
+// Leaflet Map Initialization
+let map;
+
+function initMap() {
+  // Inisialisasi peta dengan koordinat kampus yang lebih akurat
+  const campusLat = -7.275643371086998;
+  const campusLng = 112.79380041044202;
+  map = L.map('map').setView([campusLat, campusLng], 15);
+
+  // Tambahkan tile layer dari OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  // Custom icon untuk marker
+  const customIcon = L.icon({
+    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDEwYzAgNS4yNSA3IDEzIDcgMTNzNy03Ljc1IDctMTNjMC00Ljg3LTMuMTMtOC03LTh6bTAgMTFhMyAzIDAgMSAxIDAtNiAzIDMgMCAwIDEgMCA2eiIgZmlsbD0iIzY2N2VlYSIvPgo8L3N2Zz4=',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+  });
+
+  // Tambahkan marker di lokasi kampus
+  const marker = L.marker([campusLat, campusLng], { icon: customIcon })
+    .addTo(map)
+    .bindPopup(`
+      <div style="text-align: center; padding: 10px;">
+        <h3 style="color: #667eea; margin-bottom: 10px;">📍 Lokasi Kampus</h3>
+        <p><strong>Politeknik Elektronika Negeri Surabaya</strong></p>
+        <p style="font-size: 0.9em; color: #666;">Data Scientist & Graphic Designer</p>
+        <p>Koordinat: ${campusLat.toFixed(6)}, ${campusLng.toFixed(6)}</p>
+      </div>
+    `).openPopup();
+
+  // Tambahkan circle untuk menunjukkan area sekitar kampus
+  L.circle([campusLat, campusLng], {
+    color: '#667eea',
+    fillColor: '#667eea',
+    fillOpacity: 0.2,
+    radius: 1000
+  }).addTo(map);
+}
+
+// Fungsi untuk mendapatkan lokasi saat ini
+function getCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        
+        // Pindahkan peta ke lokasi user
+        map.setView([userLat, userLng], 15);
+        
+        // Tambahkan marker baru untuk lokasi user
+        L.marker([userLat, userLng], { 
+          icon: L.icon({
+            iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDEwYzAgNS4yNSA3IDEzIDcgMTNzNy03Ljc1IDctMTNjMC00Ljg3LTMuMTMtOC03LTh6bTAgMTFhMyAzIDAgMSAxIDAtNiAzIDMgMCAwIDEgMCA2eiIgZmlsbD0iI2ZmNjM0NyIvPgo8L3N2Zz4=',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+          })
+        })
+        .addTo(map)
+        .bindPopup(`
+          <div style="text-align: center; padding: 10px;">
+            <h3 style="color: #ff6347; margin-bottom: 10px;">📍 Lokasi Anda</h3>
+            <p><strong>Lat: ${userLat.toFixed(4)}</strong></p>
+            <p><strong>Lng: ${userLng.toFixed(4)}</strong></p>
+            <p style="font-size: 0.9em; color: #666;">Lokasi terkini Anda</p>
+          </div>
+        `).openPopup();
+      },
+      function(error) {
+        alert('Tidak dapat mengakses lokasi: ' + error.message);
+      }
+    );
+  } else {
+    alert('Geolocation tidak didukung oleh browser ini');
+  }
+}
+
+// Inisialisasi peta saat halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+  // Cek apakah elemen map ada
+  if (document.getElementById('map')) {
+    initMap();
+  }
+});
