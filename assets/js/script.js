@@ -379,6 +379,7 @@ for (let i = 0; i < navigationLinks.length; i++) {
         pages[j].classList.add("active");
         navigationLinks[j].classList.add("active");
         window.scrollTo(0, 0);
+        AOS.refresh(); // reset dan jalankan ulang animasi
         
         // KUNCI SOLUSI: Perbaiki map saat tab Contact diklik
         if (clickedPage === 'contact') {
@@ -449,7 +450,7 @@ if (typeof IntersectionObserver !== 'undefined') {
 
 // ==== AOS INIT ====
 AOS.init({
-  once: true, // animasi hanya jalan sekali
+  once: false, // animasi hanya jalan sekali
   easing: 'ease-in-out',
 });
 
