@@ -447,3 +447,29 @@ if (typeof IntersectionObserver !== 'undefined') {
   }, 1000);
 }
 
+// ==== AOS INIT ====
+AOS.init({
+  once: true, // animasi hanya jalan sekali
+  easing: 'ease-in-out',
+});
+
+// ==== GSAP INTRO ANIMATION ====
+window.addEventListener("load", () => {
+  const tl = gsap.timeline();
+
+  tl.from(".avatar-box", {
+    opacity: 0,
+    duration: 1
+  })
+  .from(".info-content .name", {
+    opacity: 0,
+    y: 20,
+    duration: 0.8
+  }, "-=0.5")
+  .from(".info-content .title", {
+    opacity: 0,
+    y: 20,
+    duration: 0.8
+  }, "-=0.6");
+});
+
